@@ -15,22 +15,18 @@
  */
 package dev.limburg.checkstyle.formatter;
 
-import static java.util.List.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.util.Arrays.sort;
+import static org.junit.Assert.assertArrayEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.Violation;
 
-class AuditEventComparatorTest {
+public class AuditEventComparatorTest {
 
     @Test
-    void compareTo() {
+    public void compareTo() {
         // Given
         AuditEventComparator comparator = new AuditEventComparator();
         AuditEvent firstEvent = new AuditEvent(this, null,
@@ -41,12 +37,12 @@ class AuditEventComparatorTest {
             new Violation(1, 1, "bundle", "violation.key", new Object[0], "module", AuditEventComparatorTest.class, "message"));
         AuditEvent fourthEvent = new AuditEvent(this, null,
             new Violation(2, 2, "bundle", "violation.key", new Object[0], "module", AuditEventComparatorTest.class, "message"));
-        List<AuditEvent> events = new ArrayList<>(of(firstEvent, secondEvent, thirdEvent, fourthEvent));
+        AuditEvent[] events = new AuditEvent[] {firstEvent, secondEvent, thirdEvent, fourthEvent};
 
         // When
-        Collections.sort(events, comparator);
+        sort(events, comparator);
 
         // Then
-        assertEquals(of(fourthEvent, secondEvent, firstEvent, thirdEvent), events);
+        assertArrayEquals(new AuditEvent[] {fourthEvent, secondEvent, firstEvent, thirdEvent}, events);
     }
 }
