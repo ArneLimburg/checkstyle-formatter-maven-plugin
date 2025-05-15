@@ -376,6 +376,7 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
             results.getFiles().entrySet()
                 .forEach(entry -> formatter.formatEntry(entry, lineEndingConfig));
 
+
             getLog().warn(results.getFiles().values().stream()
                 .flatMap(List::stream)
                 .map(AuditEvent::getViolation)

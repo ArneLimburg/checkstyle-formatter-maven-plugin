@@ -39,10 +39,10 @@ import dev.limburg.checkstyle.LineSeparator;
 
 public class FileFormatter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FileFormatter.class);
     private static final String FINAL_PARAMETER_KEY = "final.parameter";
     private static final String UNUSED_IMPORT_KEY = "import.unused";
     private static final String TRAILING_SPACES_KEY = "Line has trailing spaces.";
-    private static final Logger LOG = LoggerFactory.getLogger(FileFormatter.class);
     private static final Map<String, LineFormatter> FORMATTERS = new HashMap<>();
 
     static {
