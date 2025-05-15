@@ -41,8 +41,10 @@ public class FileFormatter {
 
     public void formatEntry(Map.Entry<String, List<AuditEvent>> entry) {
         try {
-            String filename = entry.getValue().iterator().next().getFileName();
-            format(filename, entry.getValue());
+            if (!entry.getValue().isEmpty()) {
+                String filename = entry.getValue().iterator().next().getFileName();
+                format(filename, entry.getValue());
+            }
         } catch (IOException e) {
             throw new CheckstyleIoException(e);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Arne Limburg, Steffen Pieper.
+ * Copyright 2025 Arne Limburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,17 @@
  */
 package dev.limburg.example;
 
-public class App {
-    public static void main(final String[] args) {
-    }
+import dev.limburg.example.parameter.ParameterParser;
 
-    public static methodWithMultipleParameters(final boolean a, final String b,
-        final int c, final int d, final Integer e) {
-        // this method does nothing
+import java.io.IOException;
+import java.net.Socket;
+
+import javax.net.SocketFactory;
+
+public class App {
+    public static void main(String[] args) throws IOException {
+        ParameterParser parser = new ParameterParser(args);
+        Socket socket = SocketFactory.getDefault().createSocket(parser.getHost(), parser.getPort());
+        socket.close();
     }
 }

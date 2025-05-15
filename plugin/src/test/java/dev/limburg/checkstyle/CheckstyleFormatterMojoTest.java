@@ -29,5 +29,12 @@ public class CheckstyleFormatterMojoTest {
         rule.whenExecuteFormatting();
         rule.thenResultIsSameAs("src/it/java/final-parameter-result");
     }
+
+    @Test
+    public void formatImports() throws Exception {
+        rule.given("src/it/java/import-order");
+        rule.whenExecuteFormatting();
+        rule.thenResultIsSameAs("src/it/java/import-order-result");
+    }
 }
 
