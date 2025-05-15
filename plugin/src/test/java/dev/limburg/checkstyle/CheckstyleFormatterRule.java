@@ -110,8 +110,11 @@ public class CheckstyleFormatterRule extends MojoRule {
             if (!expectedFilenames.contains(actualFile.getName())) {
                 fail("unexpected file " + actualFile.getName() + " in folder " + expectedDirectory.getName());
             }
+            File expectedFile = new File(expectedDirectory, actualFile.getName());
             if (actualFile.isDirectory()) {
-                compare(new File(expectedDirectory, actualFile.getName()), actualFile);
+                compare(expectedFile, actualFile);
+            } else {
+                compareFiles(expectedFile, actualFile);
             }
         }
     }
