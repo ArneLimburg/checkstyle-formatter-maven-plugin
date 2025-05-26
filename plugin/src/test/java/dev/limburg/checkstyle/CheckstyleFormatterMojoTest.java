@@ -29,5 +29,12 @@ public class CheckstyleFormatterMojoTest {
         rule.whenExecuteFormatting();
         rule.thenResultIsSameAs("src/it/java/final-parameter-result");
     }
+
+    @Test
+    public void formatUnusedImport() throws Exception {
+        rule.given("src/it/java/unused-import");
+        rule.whenExecuteFormatting();
+        rule.thenResultIsSameAs("src/it/java/unused-import-result");
+    }
 }
 
