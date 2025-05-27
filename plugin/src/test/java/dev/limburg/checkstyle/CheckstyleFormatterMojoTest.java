@@ -36,5 +36,12 @@ public class CheckstyleFormatterMojoTest {
         rule.whenExecuteFormatting();
         rule.thenResultIsSameAs("src/it/java/unused-import-result");
     }
+
+    @Test
+    public void trailingSpaces() throws Exception {
+        rule.given("src/it/java/trailing-spaces");
+        rule.whenExecuteFormatting();
+        rule.thenResultIsSameAs("src/it/java/trailing-spaces");
+    }
 }
 
