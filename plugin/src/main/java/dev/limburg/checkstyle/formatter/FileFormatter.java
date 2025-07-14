@@ -15,6 +15,7 @@
  */
 package dev.limburg.checkstyle.formatter;
 
+import static dev.limburg.checkstyle.CheckstyleFormatterMojo.LINE_ENDING_PROPERTY_NAME;
 import static java.util.Optional.ofNullable;
 
 import java.io.BufferedReader;
@@ -23,42 +24,53 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
+
+import dev.limburg.checkstyle.LineSeparator;
 
 public class FileFormatter {
 
+    private static final String FINAL_PARAMETER_KEY = "final.parameter";
+    private static final String UNUSED_IMPORT_KEY = "import.unused";
+    private static final String TRAILING_SPACES_KEY = "Line has trailing spaces.";
+    private static final Logger LOG = LoggerFactory.getLogger(FileFormatter.class);
     private static final Map<String, LineFormatter> FORMATTERS = new HashMap<>();
 
     static {
-        FORMATTERS.put("final.parameter", new FinalParameterFormatter());
+        FORMATTERS.put(FINAL_PARAMETER_KEY, new FinalParameterFormatter());
+        FORMATTERS.put(UNUSED_IMPORT_KEY, new UnusedImportFormatter());
+        FORMATTERS.put(TRAILING_SPACES_KEY, new TrailingSpacesFormatter());
     }
 
-    public void formatEntry(Map.Entry<String, List<AuditEvent>> entry) {
+    public void formatEntry(Map.Entry<String, List<AuditEvent>> entry, Configuration checkstyleConfig) {
         try {
             String filename = entry.getValue().iterator().next().getFileName();
-            format(filename, entry.getValue());
+            format(filename, entry.getValue(), checkstyleConfig);
         } catch (IOException e) {
             throw new CheckstyleIoException(e);
         }
     }
 
-    private void format(String file, List<AuditEvent> auditEvents) throws IOException {
+    private void format(String file, List<AuditEvent> auditEvents, Configuration checkstyleConfig) throws IOException {
         List<String> lines = readFile(file);
         List<AuditEvent> sortedEvents = new ArrayList<>(auditEvents);
-        Collections.sort(sortedEvents, new AuditEventComparator());
+        sortedEvents.sort(new AuditEventComparator());
+
         for (AuditEvent auditEvent : sortedEvents) {
-            Optional<LineFormatter> formatter = ofNullable(FORMATTERS.get(auditEvent.getViolation().getKey()));
-            if (formatter.isPresent()) {
-                lines = formatter.get().format(auditEvent.getViolation(), lines);
-            }
+            LineFormatter formatter = ofNullable(FORMATTERS.get(auditEvent.getViolation().getKey()))
+                .orElse((v, l) -> l);
+            lines = formatter.format(auditEvent.getViolation(), lines);
         }
-        writeFile(file, lines);
+        writeFile(file, lines, extractLineSeparator(checkstyleConfig));
     }
 
     private List<String> readFile(String file) throws IOException {
@@ -67,9 +79,21 @@ public class FileFormatter {
         }
     }
 
-    private void writeFile(String filename, List<String> lines) throws IOException {
+    private void writeFile(String filename, List<String> lines, String lineSeparator) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-            lines.forEach(writer::println);
+            lines.forEach(s -> {
+                writer.print(s);
+                writer.print(lineSeparator);
+            });
         }
+    }
+
+    private String extractLineSeparator(Configuration checkstyleConfig) {
+        try {
+            return checkstyleConfig.getProperty(LINE_ENDING_PROPERTY_NAME);
+        } catch (CheckstyleException e) {
+            LOG.info("Could not read line ending property, use System.lineSeparator() instead");
+        }
+        return LineSeparator.SYSTEM.getSeparator();
     }
 }

@@ -15,12 +15,16 @@
  */
 package dev.limburg.checkstyle;
 
+import static dev.limburg.checkstyle.LineSeparator.fromString;
+import static org.codehaus.plexus.util.FileUtils.resolveFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,16 +47,17 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
+import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
+import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Violation;
 
 import dev.limburg.checkstyle.formatter.FileFormatter;
 
-/**
- * Says "Hi" to the user.
- */
 @Mojo(name = "write")
 public class CheckstyleFormatterMojo extends AbstractMojo {
 
+    public static final String LINE_ENDING_PROPERTY_NAME = "lineEnding";
     private static final String JAVA_FILES = "**\\/*.java";
     private static final String DEFAULT_CONFIG_LOCATION = "sun_checks.xml";
     /**
@@ -317,6 +322,14 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
     protected boolean includeResources = true;
 
     /**
+     * Defines the line ending for all files.
+     *
+     * @since 0.1.0
+     */
+    @Parameter(property = "checkstyleFormatter.lineEnding")
+    protected String resultingLineEnding;
+
+    /**
      * Whether to apply Checkstyle to test resource directories.
      *
      * @since 2.11
@@ -353,32 +366,22 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
         ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
         try {
-            CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
-            request.setExcludes(excludes)
-                .setIncludes(includes)
-                .setResourceIncludes(resourceIncludes)
-                .setResourceExcludes(resourceExcludes)
-                .setIncludeResources(includeResources)
-                .setIncludeTestResources(includeTestResources)
-                .setIncludeTestSourceDirectory(includeTestSourceDirectory)
-                .setProject(project)
-                .setSourceDirectories(getSourceDirectories())
-                .setResources(resources)
-                .setTestResources(testResources)
-                .setSuppressionsLocation(suppressionsLocation)
-                .setTestSourceDirectories(getTestSourceDirectories())
-                .setConfigLocation(effectiveConfigLocation)
-                .setConfigurationArtifacts(collectArtifacts("config"))
-                .setPropertyExpansion(propertyExpansion)
-                .setHeaderLocation(headerLocation)
-                .setLicenseArtifacts(collectArtifacts("license"))
-                .setCacheFile(cacheFile)
-                .setSuppressionsFileExpression(suppressionsFileExpression)
-                .setEncoding(inputEncoding)
-                .setPropertiesLocation(propertiesLocation);
+            CheckstyleExecutorRequest request = buildCheckstyleExecutorRequest(effectiveConfigLocation);
             CheckstyleResults results = checkstyleExecutor.executeCheckstyle(request);
 
-            results.getFiles().entrySet().forEach(formatter::formatEntry);
+            DefaultConfiguration lineEndingConfig = new DefaultConfiguration(LINE_ENDING_PROPERTY_NAME);
+            lineEndingConfig.addProperty(LINE_ENDING_PROPERTY_NAME, fromString(resultingLineEnding).getSeparator());
+            lineEndingConfig.addChild(results.getConfiguration());
+
+            results.getFiles().entrySet()
+                .forEach(entry -> formatter.formatEntry(entry, lineEndingConfig));
+
+            getLog().warn(results.getFiles().values().stream()
+                .flatMap(List::stream)
+                .map(AuditEvent::getViolation)
+                .map(Violation::getKey)
+                .collect(Collectors.joining(", "))
+            );
         } catch (CheckstyleException e) {
             throw new MojoExecutionException("Failed during checkstyle configuration", e);
         } catch (CheckstyleExecutorException e) {
@@ -387,6 +390,31 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
             // be sure to restore original context classloader
             Thread.currentThread().setContextClassLoader(currentClassLoader);
         }
+    }
+
+    private CheckstyleExecutorRequest buildCheckstyleExecutorRequest(String effectiveConfigLocation) {
+        return new CheckstyleExecutorRequest().setExcludes(excludes)
+            .setIncludes(includes)
+            .setResourceIncludes(resourceIncludes)
+            .setResourceExcludes(resourceExcludes)
+            .setIncludeResources(includeResources)
+            .setIncludeTestResources(includeTestResources)
+            .setIncludeTestSourceDirectory(includeTestSourceDirectory)
+            .setProject(project)
+            .setSourceDirectories(getSourceDirectories())
+            .setResources(resources)
+            .setTestResources(testResources)
+            .setSuppressionsLocation(suppressionsLocation)
+            .setTestSourceDirectories(getTestSourceDirectories())
+            .setConfigLocation(effectiveConfigLocation)
+            .setConfigurationArtifacts(collectArtifacts("config"))
+            .setPropertyExpansion(propertyExpansion)
+            .setHeaderLocation(headerLocation)
+            .setLicenseArtifacts(collectArtifacts("license"))
+            .setCacheFile(cacheFile)
+            .setSuppressionsFileExpression(suppressionsFileExpression)
+            .setEncoding(inputEncoding)
+            .setPropertiesLocation(propertiesLocation);
     }
 
     private String computeEffectiveConfigLocation() throws MojoExecutionException {
@@ -419,7 +447,7 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
         }
         List<File> sourceDirs = new ArrayList<>(sourceDirectories.size());
         for (String sourceDir : sourceDirectories) {
-            sourceDirs.add(FileUtils.resolveFile(project.getBasedir(), sourceDir));
+            sourceDirs.add(resolveFile(project.getBasedir(), sourceDir));
         }
         return sourceDirs;
     }
@@ -458,7 +486,7 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
         }
         List<File> testSourceDirs = new ArrayList<>(testSourceDirectories.size());
         for (String testSourceDir : testSourceDirectories) {
-            testSourceDirs.add(FileUtils.resolveFile(project.getBasedir(), testSourceDir));
+            testSourceDirs.add(resolveFile(project.getBasedir(), testSourceDir));
         }
         return testSourceDirs;
     }
@@ -469,12 +497,10 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
         }
 
         List<String> filtered = new ArrayList<>(allSourceDirectories.size());
-        Path buildTarget = FileUtils.resolveFile(
-            project.getBasedir(), project.getBuild().getDirectory())
-            .toPath();
+        Path buildTarget = resolveFile(project.getBasedir(), project.getBuild().getDirectory()).toPath();
 
         for (String sourceDir : allSourceDirectories) {
-            Path src = FileUtils.resolveFile(project.getBasedir(), sourceDir).toPath();
+            Path src = resolveFile(project.getBasedir(), sourceDir).toPath();
             if (!src.startsWith(buildTarget)) {
                 filtered.add(sourceDir);
             }

@@ -50,7 +50,7 @@ public class CheckstyleFormatterRule extends MojoRule {
     public void whenExecuteFormatting() throws Exception {
         CheckstyleFormatterMojo formatter = (CheckstyleFormatterMojo)lookupConfiguredMojo(directory, "write");
         assertNotNull(formatter);
-        formatter.sourceDirectories = List.of("");
+        formatter.sourceDirectories = List.of("dev/limburg/example/App.java");
         formatter.execute();
         File reportDirectory = new File(directory, "target");
         for (File file: reportDirectory.listFiles()) {
