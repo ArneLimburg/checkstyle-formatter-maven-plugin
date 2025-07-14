@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Arne Limburg, Steffen Pieper.
+ * Copyright 2025 Steffen Pieper.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example;
+package dev.limburg.checkstyle.formatter;
 
-/**
- * Hello world!
- */
-public class App {
-    public static void main(final String[] args) {
-        System.out.println(getHello());
-    }
+import java.util.ArrayList;
+import java.util.List;
 
-    private static String getHello() {
-        return "Hello World!";
+import com.puppycrawl.tools.checkstyle.api.Violation;
+
+public class UnusedImportFormatter implements LineFormatter {
+    @Override
+    public List<String> format(Violation violation, List<String> lines) {
+        List<String> modifiableList = new ArrayList<>(lines);
+        int lineNo = violation.getLineNo() - 1;
+        modifiableList.remove(lineNo);
+        return modifiableList;
     }
 }
