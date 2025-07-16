@@ -1,0 +1,51 @@
+name: build # Build and release master
+
+on:
+  push:
+    branches:
+      - prepare-release
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: checkout
+        uses: actions/checkout@v2
+      - id: setup-git
+        run: |
+          git config user.name Arne Limburg
+          git config user.email arne@apache.org
+      - id: install-key
+        name: Install gpg secret key
+        run: |
+          cat <(echo -e "${{ secrets.GPG_SECRET_KEY }}") | gpg --batch --import
+      - id: install-jdk
+        name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - id: setup-maven
+        name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - id: setup-settings
+        uses: s4u/maven-settings-action@v3.1.0
+        with:
+          servers: '[{"id": "central", "username": "${{ secrets.CENTRAL_USERNAME }}", "password": "${{ secrets.CENTRAL_PASSWORD }}"}]'
+          override: true
+      - id: maven-release
+        name: Release
+        run: |
+          mvn -B release:prepare
+          mvn -B release:perform -DreleaseProfiles=release -Darguments=-Dgpg.passphrase=$GPG_PASSPHRASE
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_SECRET_KEY_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
