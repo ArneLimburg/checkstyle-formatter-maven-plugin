@@ -15,6 +15,8 @@
  */
 package dev.limburg.checkstyle.formatter;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+
 import java.util.List;
 
 import com.puppycrawl.tools.checkstyle.api.Violation;
@@ -22,4 +24,19 @@ import com.puppycrawl.tools.checkstyle.api.Violation;
 public interface LineFormatter {
 
     List<String> format(Violation violation, List<String> lines);
+
+    default String getLine(Violation violation, List<String> lines) {
+        if (isEmpty(lines)) {
+            return "";
+        }
+        return lines.get(violation.getLineNo() - 1);
+    }
+
+    default int getColumnNumber(Violation violation) {
+        return violation.getColumnNo() - 1;
+    }
+
+    default int getLineNumber(Violation violation) {
+        return violation.getLineNo() - 1;
+    }
 }

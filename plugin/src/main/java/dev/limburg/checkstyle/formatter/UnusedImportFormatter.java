@@ -24,8 +24,7 @@ public class UnusedImportFormatter implements LineFormatter {
     @Override
     public List<String> format(Violation violation, List<String> lines) {
         List<String> modifiableList = new ArrayList<>(lines);
-        int lineNo = violation.getLineNo() - 1;
-        modifiableList.remove(lineNo);
+        modifiableList.remove(getLineNumber(violation));
         return modifiableList;
     }
 }

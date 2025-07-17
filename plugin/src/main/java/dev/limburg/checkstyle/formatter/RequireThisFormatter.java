@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Arne Limburg, Steffen Pieper.
+ * Copyright 2025 Steffen Pieper, Arne Limburg.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,15 @@ import java.util.List;
 
 import com.puppycrawl.tools.checkstyle.api.Violation;
 
-public class FinalParameterFormatter implements LineFormatter {
-
+public class RequireThisFormatter implements LineFormatter {
     @Override
-    public List<String> format(Violation violation, List<String> content) {
-        List<String> lines = new ArrayList<>(content);
-
+    public List<String> format(Violation violation, List<String> lines) {
+        List<String> modifiableLines = new ArrayList<>(lines);
+        String lineToChange = getLine(violation, lines);
         int columnNo = getColumnNumber(violation);
-        String line = getLine(violation, lines);
 
-        String formattedLine = line.substring(0, columnNo) + "final " + line.substring(columnNo);
-        lines.set(getLineNumber(violation), formattedLine);
-        return lines;
+        String formattedLine = lineToChange.substring(0, columnNo) + "this." + lineToChange.substring(columnNo);
+        modifiableLines.set(getLineNumber(violation), formattedLine);
+        return modifiableLines;
     }
 }

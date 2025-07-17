@@ -43,12 +43,14 @@ public class FileFormatter {
     private static final String FINAL_PARAMETER_KEY = "final.parameter";
     private static final String UNUSED_IMPORT_KEY = "import.unused";
     private static final String TRAILING_SPACES_KEY = "Line has trailing spaces.";
+    private static final String REQUIRE_THIS = "require.this.variable";
     private static final Map<String, LineFormatter> FORMATTERS = new HashMap<>();
 
     static {
         FORMATTERS.put(FINAL_PARAMETER_KEY, new FinalParameterFormatter());
         FORMATTERS.put(UNUSED_IMPORT_KEY, new UnusedImportFormatter());
         FORMATTERS.put(TRAILING_SPACES_KEY, new TrailingSpacesFormatter());
+        FORMATTERS.put(REQUIRE_THIS, new RequireThisFormatter());
     }
 
     public void formatEntry(Map.Entry<String, List<AuditEvent>> entry, Configuration checkstyleConfig) {

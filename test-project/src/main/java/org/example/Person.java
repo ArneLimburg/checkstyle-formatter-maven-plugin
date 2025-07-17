@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Arne Limburg, Steffen Pieper.
+ * Copyright 2025 Steffen Pieper.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,20 @@
  */
 package org.example;
 
-/**
- * Hello world!
- */
-public class App {
-    public static void main(final String[] args) {
-        System.out.println(getHello());
-        System.out.println(new Person("jon doe").sayHello());
+import static java.lang.String.format;
+
+public class Person {
+    private String name;
+
+    public Person(String name) {
+        setName(name);
     }
 
-    private static String getHello() {
-        return "Hello World!";
+    private void setName(String newName) {
+        this.name = newName;
+    }
+
+    public String sayHello() {
+        return format("Hi, my name is %s", this.name);
     }
 }

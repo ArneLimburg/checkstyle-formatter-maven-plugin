@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example;
+package dev.limburg.example;
 
-/**
- * Hello world!
- */
+import static java.lang.String.format;
+
 public class App {
-    public static void main(final String[] args) {
-        System.out.println(getHello());
-        System.out.println(new Person("jon doe").sayHello());
+    public static void main(String[] args) {
     }
 
-    private static String getHello() {
-        return "Hello World!";
+    public static methodWithMultipleParameters(final boolean a, String b,
+        int c, final int d, Integer e) {
+        // this method does nothing
+    }
+
+    public class Person {
+        private String name;
+
+        public Person(String newName) {
+            name = newName;
+        }
+
+        public String sayHello() {
+            return format("Hello, im %s", name);
+        }
     }
 }

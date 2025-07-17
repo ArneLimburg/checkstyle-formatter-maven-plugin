@@ -24,9 +24,8 @@ public class TrailingSpacesFormatter implements LineFormatter {
     @Override
     public List<String> format(Violation violation, List<String> lines) {
         List<String> content = new ArrayList<>(lines);
-        int lineNo = violation.getLineNo() - 1;
-        String trailingSpaceLine = content.get(lineNo);
-        content.set(lineNo, trailingSpaceLine.stripTrailing());
+        String trailingSpaceLine = getLine(violation, content);
+        content.set(getLineNumber(violation), trailingSpaceLine.stripTrailing());
         return content;
     }
 }

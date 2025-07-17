@@ -68,6 +68,12 @@
  
   <module name="TreeWalker">
 
+    <module name="RequireThis">
+      <property name="checkFields" value="true"/>
+      <property name="checkMethods" value="true"/>
+      <property name="validateOnlyOverlapping" value="false"/>
+    </module>
+
     <property name="tabWidth" value="4" />
 
     <module name="ArrayTypeStyle"/>
