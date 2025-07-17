@@ -43,6 +43,12 @@ under the License.
       <url>https://github.com/ArneLimburg</url>
       <organization>The Apache Software Foundation</organization>
     </developer>
+    <developer>
+      <name>Steffen Pieper</name>
+      <email>pieper.steffen@hotmail.com</email>
+      <url>https://github.com/phtevePhynn</url>
+      <organization>The Apache Software Foundation</organization>
+    </developer>
   </developers>
 
   <scm>
