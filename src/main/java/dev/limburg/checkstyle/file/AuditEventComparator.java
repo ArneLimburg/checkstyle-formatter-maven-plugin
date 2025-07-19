@@ -13,12 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.limburg.checkstyle.formatter;
+package dev.limburg.checkstyle.file;
 
-import java.io.IOException;
+import java.util.Comparator;
 
-public class CheckstyleIoException extends RuntimeException {
-    public CheckstyleIoException(IOException ioe) {
-        super(ioe);
+import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+
+public class AuditEventComparator implements Comparator<AuditEvent> {
+
+    @Override
+    public int compare(AuditEvent left, AuditEvent right) {
+        int comparison = right.getLine() - left.getLine();
+        if (comparison != 0) {
+            return comparison;
+        }
+        comparison = right.getColumn() - left.getColumn();
+        if (comparison != 0) {
+            return comparison;
+        }
+        return left.getViolation().getKey().compareTo(right.getViolation().getKey());
     }
 }

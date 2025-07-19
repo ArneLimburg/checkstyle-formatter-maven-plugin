@@ -23,6 +23,8 @@ import org.junit.Test;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.Violation;
 
+import dev.limburg.checkstyle.file.AuditEventComparator;
+
 public class AuditEventComparatorTest {
 
     @Test
