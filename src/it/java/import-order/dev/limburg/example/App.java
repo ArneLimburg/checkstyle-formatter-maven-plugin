@@ -15,12 +15,26 @@
  */
 package dev.limburg.example;
 
-public class App {
-    public static void main(final String[] args) {
-    }
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.apache.commons.lang3.Validate.notEmpty;
+import org.slf4j.Logger;
 
-    public static methodWithMultipleParameters(final boolean a, final String b,
-        final int c, final int d, final Integer e) {
-        // this method does nothing
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.lang3.Validate;
+
+public class App {
+
+    private static final Logger LOG = getLogger(App.class);
+
+    public static void main(String[] args) {
+        Validate.noNullElements(args);
+        notEmpty(args);
+        try (InputStream in = new FileInputStream(args[0])) {
+            in.read();
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
     }
 }

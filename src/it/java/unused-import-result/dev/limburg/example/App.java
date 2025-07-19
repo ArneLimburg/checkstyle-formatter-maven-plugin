@@ -16,7 +16,7 @@
 package dev.limburg.example;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
     }
 
     public static methodWithMultipleParameters(final boolean a, final String b,
