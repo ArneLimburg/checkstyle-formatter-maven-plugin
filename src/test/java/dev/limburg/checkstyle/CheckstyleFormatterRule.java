@@ -50,7 +50,7 @@ public class CheckstyleFormatterRule extends MojoRule {
     public void whenExecuteFormatting() throws Exception {
         CheckstyleFormatterMojo formatter = (CheckstyleFormatterMojo)lookupConfiguredMojo(directory, "write");
         assertNotNull(formatter);
-        formatter.sourceDirectories = List.of("dev/limburg/example/App.java");
+        formatter.sourceDirectories = List.of(".");
         formatter.execute();
         File reportDirectory = new File(directory, "target");
         for (File file: reportDirectory.listFiles()) {
@@ -110,9 +110,7 @@ public class CheckstyleFormatterRule extends MojoRule {
             if (!expectedFilenames.contains(actualFile.getName())) {
                 fail("unexpected file " + actualFile.getName() + " in folder " + expectedDirectory.getName());
             }
-            if (actualFile.isDirectory()) {
-                compare(new File(expectedDirectory, actualFile.getName()), actualFile);
-            }
+            compare(new File(expectedDirectory, actualFile.getName()), actualFile);
         }
     }
 }

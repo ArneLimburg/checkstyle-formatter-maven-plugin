@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Arne Limburg, Steffen Pieper.
+ * Copyright 2025 Arne Limburg.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.limburg.checkstyle.formatter;
+package dev.limburg.checkstyle.file;
 
-import java.util.Comparator;
+public interface FileChangedListener {
 
-import com.puppycrawl.tools.checkstyle.api.AuditEvent;
-
-public class AuditEventComparator implements Comparator<AuditEvent> {
-
-    @Override
-    public int compare(AuditEvent left, AuditEvent right) {
-        int comparison = right.getLine() - left.getLine();
-        return comparison != 0 ? comparison : right.getColumn() - left.getColumn();
-    }
+    void onChanged(String filename);
 }

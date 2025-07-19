@@ -16,11 +16,11 @@
 package dev.limburg.example;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
     }
-
-    public static methodWithMultipleParameters(final boolean a, String b,
-        int c, final int d, Integer e) {
+    
+    public static methodWithMultipleParameters(final boolean a, final String b,
+        final int c, final int d, final Integer e) { 
         // this method does nothing
     }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.limburg.checkstyle.formatter;
+package dev.limburg.checkstyle.file;
 
 import static dev.limburg.checkstyle.CheckstyleFormatterMojo.LINE_ENDING_PROPERTY_NAME;
 import static java.util.Optional.ofNullable;
@@ -23,10 +23,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +41,13 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 
 import dev.limburg.checkstyle.LineSeparator;
+import dev.limburg.checkstyle.formatter.FinalParameterFormatter;
+import dev.limburg.checkstyle.formatter.ImportGroupsFormatter;
+import dev.limburg.checkstyle.formatter.ImportOrderFormatter;
+import dev.limburg.checkstyle.formatter.ImportSeparationFormatter;
+import dev.limburg.checkstyle.formatter.LineFormatter;
+import dev.limburg.checkstyle.formatter.TrailingSpacesFormatter;
+import dev.limburg.checkstyle.formatter.UnusedImportFormatter;
 
 public class FileFormatter {
 
@@ -43,18 +55,33 @@ public class FileFormatter {
     private static final String FINAL_PARAMETER_KEY = "final.parameter";
     private static final String UNUSED_IMPORT_KEY = "import.unused";
     private static final String TRAILING_SPACES_KEY = "Line has trailing spaces.";
+    private static final String IMPORT_ORDERING_KEY = "import.ordering";
+    private static final String IMPORT_SEPARATION_KEY = "import.separation";
+    private static final String IMPORT_GROUPS_KEY = "import.groups.separated.internally";
     private static final Map<String, LineFormatter> FORMATTERS = new HashMap<>();
 
     static {
         FORMATTERS.put(FINAL_PARAMETER_KEY, new FinalParameterFormatter());
         FORMATTERS.put(UNUSED_IMPORT_KEY, new UnusedImportFormatter());
         FORMATTERS.put(TRAILING_SPACES_KEY, new TrailingSpacesFormatter());
+        FORMATTERS.put(IMPORT_ORDERING_KEY, new ImportOrderFormatter());
+        FORMATTERS.put(IMPORT_SEPARATION_KEY, new ImportSeparationFormatter());
+        FORMATTERS.put(IMPORT_GROUPS_KEY, new ImportGroupsFormatter());
+    }
+
+    private FileChangedListener fileChangedListener;
+    private Map<String, Set<String>> hashesPerFile = new HashMap<>();
+
+    public void registerFileChangedListener(FileChangedListener listener) {
+        fileChangedListener = listener;
     }
 
     public void formatEntry(Map.Entry<String, List<AuditEvent>> entry, Configuration checkstyleConfig) {
         try {
-            String filename = entry.getValue().iterator().next().getFileName();
-            format(filename, entry.getValue(), checkstyleConfig);
+            if (!entry.getValue().isEmpty()) {
+                String filename = entry.getValue().iterator().next().getFileName();
+                format(filename, entry.getValue(), checkstyleConfig);
+            }
         } catch (IOException e) {
             throw new CheckstyleIoException(e);
         }
@@ -80,11 +107,19 @@ public class FileFormatter {
     }
 
     private void writeFile(String filename, List<String> lines, String lineSeparator) throws IOException {
+        MessageDigest digest = newDigest();
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
             lines.forEach(s -> {
                 writer.print(s);
                 writer.print(lineSeparator);
+                digest.update(s.getBytes());
             });
+        }
+        String hash = new BigInteger(1, digest.digest()).toString(16);
+        Set<String> hashes = hashesPerFile.computeIfAbsent(filename, f -> new HashSet<>());
+        if (!hashes.contains(hash)) {
+            hashes.add(hash);
+            ofNullable(fileChangedListener).ifPresent(listener -> listener.onChanged(filename));
         }
     }
 
@@ -95,5 +130,13 @@ public class FileFormatter {
             LOG.info("Could not read line ending property, use System.lineSeparator() instead");
         }
         return LineSeparator.SYSTEM.getSeparator();
+    }
+
+    private MessageDigest newDigest() {
+        try {
+            return MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

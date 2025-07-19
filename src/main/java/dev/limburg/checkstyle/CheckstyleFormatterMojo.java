@@ -16,15 +16,16 @@
 package dev.limburg.checkstyle;
 
 import static dev.limburg.checkstyle.LineSeparator.fromString;
+import static java.util.function.Predicate.isEqual;
 import static org.codehaus.plexus.util.FileUtils.resolveFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,11 +49,9 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
-import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-import com.puppycrawl.tools.checkstyle.api.Violation;
 
-import dev.limburg.checkstyle.formatter.FileFormatter;
+import dev.limburg.checkstyle.file.FileFormatter;
 
 @Mojo(name = "write")
 public class CheckstyleFormatterMojo extends AbstractMojo {
@@ -367,22 +366,19 @@ public class CheckstyleFormatterMojo extends AbstractMojo {
 
         try {
             CheckstyleExecutorRequest request = buildCheckstyleExecutorRequest(effectiveConfigLocation);
-            CheckstyleResults results = checkstyleExecutor.executeCheckstyle(request);
+            Map<String, Boolean> filesChanged = new HashMap<>();
+            formatter.registerFileChangedListener((filename) -> filesChanged.put(filename, true));
+            do {
+                filesChanged.clear();
+                CheckstyleResults results = checkstyleExecutor.executeCheckstyle(request);
 
-            DefaultConfiguration lineEndingConfig = new DefaultConfiguration(LINE_ENDING_PROPERTY_NAME);
-            lineEndingConfig.addProperty(LINE_ENDING_PROPERTY_NAME, fromString(resultingLineEnding).getSeparator());
-            lineEndingConfig.addChild(results.getConfiguration());
+                DefaultConfiguration lineEndingConfig = new DefaultConfiguration(LINE_ENDING_PROPERTY_NAME);
+                lineEndingConfig.addProperty(LINE_ENDING_PROPERTY_NAME, fromString(resultingLineEnding).getSeparator());
+                lineEndingConfig.addChild(results.getConfiguration());
 
-            results.getFiles().entrySet()
-                .forEach(entry -> formatter.formatEntry(entry, lineEndingConfig));
-
-
-            getLog().warn(results.getFiles().values().stream()
-                .flatMap(List::stream)
-                .map(AuditEvent::getViolation)
-                .map(Violation::getKey)
-                .collect(Collectors.joining(", "))
-            );
+                results.getFiles().entrySet()
+                    .forEach(entry -> formatter.formatEntry(entry, lineEndingConfig));
+            } while (filesChanged.values().stream().anyMatch(isEqual(true)));
         } catch (CheckstyleException e) {
             throw new MojoExecutionException("Failed during checkstyle configuration", e);
         } catch (CheckstyleExecutorException e) {

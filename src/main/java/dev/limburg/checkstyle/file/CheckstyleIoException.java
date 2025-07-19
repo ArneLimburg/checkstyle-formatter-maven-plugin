@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.limburg.example;
+package dev.limburg.checkstyle.file;
 
-public class App {
-    public static void main(final String[] args) {
-    }
+import java.io.IOException;
 
-    public static methodWithMultipleParameters(final boolean a, final String b,
-        final int c, final int d, final Integer e) {
-        // this method does nothing
+public class CheckstyleIoException extends RuntimeException {
+    public CheckstyleIoException(IOException ioe) {
+        super(ioe);
     }
 }
