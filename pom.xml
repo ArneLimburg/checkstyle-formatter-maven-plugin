@@ -22,7 +22,7 @@ under the License.
 
   <groupId>dev.limburg.checkstyle</groupId>
   <artifactId>checkstyle-formatter-maven-plugin</artifactId>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Checkstyle Formatter Maven-Plugin</name>
@@ -250,6 +250,8 @@ under the License.
         <extensions>true</extensions>
         <configuration>
           <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
         </configuration>
       </plugin>
     </plugins>

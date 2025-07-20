@@ -50,5 +50,12 @@ public class CheckstyleFormatterMojoTest {
         rule.whenExecuteFormatting();
         rule.thenResultIsSameAs("src/it/java/import-order-result");
     }
+
+    @Test
+    public void indentation() throws Exception {
+        rule.given("src/it/java/indentation");
+        rule.whenExecuteFormatting();
+        rule.thenResultIsSameAs("src/it/java/indentation-result");
+    }
 }
 

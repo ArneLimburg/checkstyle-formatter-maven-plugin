@@ -45,6 +45,7 @@ import dev.limburg.checkstyle.formatter.FinalParameterFormatter;
 import dev.limburg.checkstyle.formatter.ImportGroupsFormatter;
 import dev.limburg.checkstyle.formatter.ImportOrderFormatter;
 import dev.limburg.checkstyle.formatter.ImportSeparationFormatter;
+import dev.limburg.checkstyle.formatter.IndentationFormatter;
 import dev.limburg.checkstyle.formatter.LineFormatter;
 import dev.limburg.checkstyle.formatter.TrailingSpacesFormatter;
 import dev.limburg.checkstyle.formatter.UnusedImportFormatter;
@@ -58,6 +59,10 @@ public class FileFormatter {
     private static final String IMPORT_ORDERING_KEY = "import.ordering";
     private static final String IMPORT_SEPARATION_KEY = "import.separation";
     private static final String IMPORT_GROUPS_KEY = "import.groups.separated.internally";
+    private static final String INDENTATION_ERROR_KEY = "indentation.error";
+    private static final String INDENTATION_CHILD_ERROR_KEY = "indentation.child.error";
+    private static final String INDENTATION_ERROR_MULTI_KEY = "indentation.error.multi";
+    private static final String INDENTATION_CHILD_ERROR_MULTI_KEY = "indentation.child.error.multi";
     private static final Map<String, LineFormatter> FORMATTERS = new HashMap<>();
 
     static {
@@ -67,6 +72,10 @@ public class FileFormatter {
         FORMATTERS.put(IMPORT_ORDERING_KEY, new ImportOrderFormatter());
         FORMATTERS.put(IMPORT_SEPARATION_KEY, new ImportSeparationFormatter());
         FORMATTERS.put(IMPORT_GROUPS_KEY, new ImportGroupsFormatter());
+        FORMATTERS.put(INDENTATION_ERROR_KEY, new IndentationFormatter());
+        FORMATTERS.put(INDENTATION_CHILD_ERROR_KEY, new IndentationFormatter());
+        FORMATTERS.put(INDENTATION_ERROR_MULTI_KEY, new IndentationFormatter());
+        FORMATTERS.put(INDENTATION_CHILD_ERROR_MULTI_KEY, new IndentationFormatter());
     }
 
     private FileChangedListener fileChangedListener;
