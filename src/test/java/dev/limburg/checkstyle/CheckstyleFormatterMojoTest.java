@@ -57,5 +57,12 @@ public class CheckstyleFormatterMojoTest {
         rule.whenExecuteFormatting();
         rule.thenResultIsSameAs("src/it/java/indentation-result");
     }
+
+    @Test
+    public void whitespaces() throws Exception {
+        rule.given("src/it/java/whitespaces");
+        rule.whenExecuteFormatting();
+        rule.thenResultIsSameAs("src/it/java/whitespaces-result");
+    }
 }
 
