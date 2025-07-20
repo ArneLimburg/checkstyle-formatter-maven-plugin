@@ -49,6 +49,7 @@ import dev.limburg.checkstyle.formatter.IndentationFormatter;
 import dev.limburg.checkstyle.formatter.LineFormatter;
 import dev.limburg.checkstyle.formatter.TrailingSpacesFormatter;
 import dev.limburg.checkstyle.formatter.UnusedImportFormatter;
+import dev.limburg.checkstyle.formatter.WhitespaceFormatter;
 
 public class FileFormatter {
 
@@ -63,6 +64,10 @@ public class FileFormatter {
     private static final String INDENTATION_CHILD_ERROR_KEY = "indentation.child.error";
     private static final String INDENTATION_ERROR_MULTI_KEY = "indentation.error.multi";
     private static final String INDENTATION_CHILD_ERROR_MULTI_KEY = "indentation.child.error.multi";
+    private static final String WHITESPACE_NOT_PRECEDED_KEY = "ws.notPreceded";
+    private static final String WHITESPACE_NOT_FOLLOWED_KEY = "ws.notFollowed";
+    private static final String WHITESPACE_PRECEDED_KEY = "ws.preceded";
+    private static final String WHITESPACE_FOLLOWED_KEY = "ws.followed";
     private static final Map<String, LineFormatter> FORMATTERS = new HashMap<>();
 
     static {
@@ -76,6 +81,10 @@ public class FileFormatter {
         FORMATTERS.put(INDENTATION_CHILD_ERROR_KEY, new IndentationFormatter());
         FORMATTERS.put(INDENTATION_ERROR_MULTI_KEY, new IndentationFormatter());
         FORMATTERS.put(INDENTATION_CHILD_ERROR_MULTI_KEY, new IndentationFormatter());
+        FORMATTERS.put(WHITESPACE_NOT_PRECEDED_KEY, new WhitespaceFormatter());
+        FORMATTERS.put(WHITESPACE_NOT_FOLLOWED_KEY, new WhitespaceFormatter());
+        FORMATTERS.put(WHITESPACE_PRECEDED_KEY, new WhitespaceFormatter());
+        FORMATTERS.put(WHITESPACE_FOLLOWED_KEY, new WhitespaceFormatter());
     }
 
     private FileChangedListener fileChangedListener;
