@@ -64,5 +64,12 @@ public class CheckstyleFormatterMojoTest {
         rule.whenExecuteFormatting();
         rule.thenResultIsSameAs("src/it/java/whitespaces-result");
     }
+
+    @Test
+    public void tabCharacter() throws Exception {
+        rule.given("src/it/java/tab-character");
+        rule.whenExecuteFormatting();
+        rule.thenResultIsSameAs("src/it/java/tab-character-result");
+    }
 }
 
