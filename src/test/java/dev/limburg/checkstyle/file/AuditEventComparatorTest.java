@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.limburg.checkstyle.formatter;
+package dev.limburg.checkstyle.file;
 
 import static java.util.Arrays.sort;
 import static org.junit.Assert.assertArrayEquals;
@@ -22,8 +22,6 @@ import org.junit.Test;
 
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.Violation;
-
-import dev.limburg.checkstyle.file.AuditEventComparator;
 
 public class AuditEventComparatorTest {
 
