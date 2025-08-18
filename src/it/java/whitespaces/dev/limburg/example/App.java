@@ -25,5 +25,6 @@ public class App {
         } else {
             System.out.println("The result of " + args[0] + " + " + args[1] + " is equal to " + args[2]);
         }
+        App app = new App() {};
     }
 }

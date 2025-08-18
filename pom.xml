@@ -133,9 +133,6 @@ under the License.
             <goals>
               <goal>prepare-agent</goal>
             </goals>
-            <configuration>
-              <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
-            </configuration>
           </execution>
           <execution>
             <id>default-check</id>
@@ -150,32 +147,32 @@ under the License.
                     <limit>
                       <counter>INSTRUCTION</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.52</minimum>
+                      <minimum>0.57</minimum>
                     </limit>
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.54</minimum>
+                      <minimum>0.57</minimum>
                     </limit>
                     <limit>
                       <counter>BRANCH</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.30</minimum>
+                      <minimum>0.37</minimum>
                     </limit>
                     <limit>
                       <counter>COMPLEXITY</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.43</minimum>
+                      <minimum>0.48</minimum>
                     </limit>
                     <limit>
                       <counter>METHOD</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.73</minimum>
+                      <minimum>0.75</minimum>
                     </limit>
                     <limit>
                       <counter>CLASS</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.84</minimum>
+                      <minimum>0.86</minimum>
                     </limit>
                   </limits>
                 </rule>

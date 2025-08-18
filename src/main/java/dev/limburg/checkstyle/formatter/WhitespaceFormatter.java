@@ -15,6 +15,8 @@
  */
 package dev.limburg.checkstyle.formatter;
 
+import static java.lang.Character.isWhitespace;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,17 +35,25 @@ public class WhitespaceFormatter implements LineFormatter {
     }
 
     private String formatLine(String key, String line, int column) {
-        switch (key) {
-            case "ws.notFollowed":
-                return line.substring(0, column + 1) + " " + line.substring(column + 1);
-            case "ws.notPreceded":
-                return line.substring(0, column) + " " + line.substring(column);
-            case "ws.followed":
-                return line.substring(0, column + 1) + line.substring(column + 2);
-            case "ws.preceded":
-                return line.substring(0, column - 1) + line.substring(column);
-            default:
-                return line;
+        if ("ws.notFollowed".equals(key) && !hasWhitespaceAfter(line, column)) {
+            return line.substring(0, column + 1) + " " + line.substring(column + 1);
+        } else if ("ws.notPreceded".equals(key) && !hasWhitespaceBefore(line, column)) {
+            return line.substring(0, column) + " " + line.substring(column);
+        } else if ("ws.followed".equals(key) && hasWhitespaceAfter(line, column)) {
+            return line.substring(0, column + 1) + line.substring(column + 2);
+        } else if ("ws.preceded".equals(key) && hasWhitespaceBefore(line, column)) {
+            return line.substring(0, column - 1) + line.substring(column);
+        } else {
+            // already corrected
+            return line;
         }
+    }
+
+    private boolean hasWhitespaceBefore(String line, int column) {
+        return column > 0 && isWhitespace(line.charAt(column - 1));
+    }
+
+    private boolean hasWhitespaceAfter(String line, int column) {
+        return column + 1 < line.length() && isWhitespace(line.charAt(column + 1));
     }
 }
