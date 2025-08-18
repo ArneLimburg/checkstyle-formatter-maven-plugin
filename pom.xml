@@ -22,7 +22,7 @@ under the License.
 
   <groupId>dev.limburg.checkstyle</groupId>
   <artifactId>checkstyle-formatter-maven-plugin</artifactId>
-  <version>0.4.3-SNAPSHOT</version>
+  <version>0.4.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Checkstyle Formatter Maven-Plugin</name>
@@ -41,13 +41,15 @@ under the License.
       <name>Arne Limburg</name>
       <email>arne@apache.org</email>
       <url>https://github.com/ArneLimburg</url>
-      <organization>The Apache Software Foundation</organization>
     </developer>
     <developer>
       <name>Steffen Pieper</name>
       <email>pieper.steffen@hotmail.com</email>
       <url>https://github.com/phtevePhynn</url>
-      <organization>The Apache Software Foundation</organization>
+    </developer>
+    <developer>
+      <name>Nicole Obermann</name>
+      <email>nicole.obermann@openknowledge.de</email>
     </developer>
   </developers>
 
@@ -193,7 +195,7 @@ under the License.
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.15.1</version>
         <configuration>
-          <goalPrefix>plugin</goalPrefix>
+          <goalPrefix>checkstyle-formatter</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
         </configuration>
         <executions>
