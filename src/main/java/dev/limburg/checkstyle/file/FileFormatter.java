@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
+import com.puppycrawl.tools.checkstyle.api.Violation;
 
 import dev.limburg.checkstyle.LineSeparator;
 import dev.limburg.checkstyle.formatter.FinalParameterFormatter;
@@ -114,11 +115,14 @@ public class FileFormatter {
         List<String> lines = readFile(file);
         List<AuditEvent> sortedEvents = new ArrayList<>(auditEvents);
         sortedEvents.sort(new AuditEventComparator());
+        List<Violation> violations = sortedEvents.stream().map(AuditEvent::getViolation).toList();
 
         for (AuditEvent auditEvent : sortedEvents) {
             LineFormatter formatter = ofNullable(FORMATTERS.get(auditEvent.getViolation().getKey()))
                 .orElse((v, l) -> l);
-            lines = formatter.format(auditEvent.getViolation(), lines);
+            if (formatter.canApply(auditEvent.getViolation(), violations)) {
+                lines = formatter.format(auditEvent.getViolation(), lines);
+            }
         }
         writeFile(file, lines, extractLineSeparator(checkstyleConfig));
     }

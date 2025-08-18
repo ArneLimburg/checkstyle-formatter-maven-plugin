@@ -15,6 +15,8 @@
  */
 package dev.limburg.checkstyle.formatter;
 
+import static dev.limburg.checkstyle.formatter.ImportTokenizer.everyImportOnSeparateLine;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +24,17 @@ import com.puppycrawl.tools.checkstyle.api.Violation;
 
 public class ImportSeparationFormatter implements LineFormatter {
 
+    // Applies only, when imports are already ordered.
+    @Override
+    public boolean canApply(Violation violation, List<Violation> violations) {
+        return violations.stream().map(Violation::getKey).noneMatch("import.ordering"::equals);
+    }
+
     @Override
     public List<String> format(Violation violation, List<String> lines) {
+        if (!everyImportOnSeparateLine(new ImportTokenizer(lines).tokenize())) {
+            return lines;
+        }
         List<String> modifiableList = new ArrayList<>(lines);
         int lineNo = violation.getLineNo() - 1;
         String wrongImportStatement = lines.get(lineNo);
