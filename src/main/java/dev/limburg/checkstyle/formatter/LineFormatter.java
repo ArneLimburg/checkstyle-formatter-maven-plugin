@@ -21,5 +21,9 @@ import com.puppycrawl.tools.checkstyle.api.Violation;
 
 public interface LineFormatter {
 
+    default boolean canApply(Violation violation, List<Violation> violations) {
+        return true;
+    }
+
     List<String> format(Violation violation, List<String> lines);
 }

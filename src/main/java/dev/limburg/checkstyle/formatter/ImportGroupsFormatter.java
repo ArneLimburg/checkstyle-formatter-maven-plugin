@@ -22,6 +22,12 @@ import com.puppycrawl.tools.checkstyle.api.Violation;
 
 public class ImportGroupsFormatter implements LineFormatter {
 
+    // Applies only, when imports are already ordered.
+    @Override
+    public boolean canApply(Violation violation, List<Violation> violations) {
+        return violations.stream().map(Violation::getKey).noneMatch("import.ordering"::equals);
+    }
+
     @Override
     public List<String> format(Violation violation, List<String> lines) {
         List<String> modifiableList = new ArrayList<>(lines);
