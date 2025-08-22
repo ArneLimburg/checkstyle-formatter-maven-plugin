@@ -22,7 +22,7 @@ under the License.
 
   <groupId>dev.limburg.checkstyle</groupId>
   <artifactId>checkstyle-formatter-maven-plugin</artifactId>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.5.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>Checkstyle Formatter Maven-Plugin</name>
@@ -57,7 +57,7 @@ under the License.
     <url>https://github.com/ArneLimburg/checkstyle-formatter-maven-plugin</url>
     <connection>scm:git:git://github.com/ArneLimburg/checkstyle-formatter-maven-plugin.git</connection>
     <developerConnection>scm:git:https://github.com/ArneLimburg/checkstyle-formatter-maven-plugin.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>0.5.0</tag>
   </scm>
 
   <properties>
