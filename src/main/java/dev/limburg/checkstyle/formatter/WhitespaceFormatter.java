@@ -15,6 +15,7 @@
  */
 package dev.limburg.checkstyle.formatter;
 
+import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isWhitespace;
 
 import java.util.ArrayList;
@@ -36,7 +37,8 @@ public class WhitespaceFormatter implements LineFormatter {
 
     private String formatLine(String key, String line, int column) {
         if ("ws.notFollowed".equals(key) && !hasWhitespaceAfter(line, column)) {
-            return line.substring(0, column + 1) + " " + line.substring(column + 1);
+            int index = calculateSplitIndex(line, column);
+            return line.substring(0, index) + " " + line.substring(index);
         } else if ("ws.notPreceded".equals(key) && !hasWhitespaceBefore(line, column)) {
             return line.substring(0, column) + " " + line.substring(column);
         } else if ("ws.followed".equals(key) && hasWhitespaceAfter(line, column)) {
@@ -47,6 +49,15 @@ public class WhitespaceFormatter implements LineFormatter {
             // already corrected
             return line;
         }
+    }
+
+    private int calculateSplitIndex(String line, int column) {
+        int index = column + 1;
+        // column is sometimes off by one, so we use this heuristic
+        while (isAlphabetic(line.charAt(index - 1)) && isAlphabetic(line.charAt(index))) {
+            index++;
+        }
+        return index;
     }
 
     private boolean hasWhitespaceBefore(String line, int column) {

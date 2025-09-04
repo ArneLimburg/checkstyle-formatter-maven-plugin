@@ -18,7 +18,7 @@ package dev.limburg.example;
 public class App {
 
     public static void main(String[] args) {
-        if (Integer.parseInt(args[0]) + Integer. parseInt(args[1]) < Integer.parseInt(args[2])){
+        if(Integer.parseInt(args[0]) + Integer. parseInt(args[1]) < Integer.parseInt(args[2])){
             System.out.println("The result of "+args[0]+" + " + args[1] + " is less than "+args[2]) ;
         } else if (Integer.parseInt(args[0])+Integer.parseInt(args[1]) > Integer.parseInt(args[2])) {
             System.out.println("The result of " + args[0] + " + " + args[1] + " is greater than " + args[2]);
