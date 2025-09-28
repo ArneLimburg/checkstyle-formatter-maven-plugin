@@ -48,6 +48,7 @@ import dev.limburg.checkstyle.formatter.ImportOrderFormatter;
 import dev.limburg.checkstyle.formatter.ImportSeparationFormatter;
 import dev.limburg.checkstyle.formatter.IndentationFormatter;
 import dev.limburg.checkstyle.formatter.LineFormatter;
+import dev.limburg.checkstyle.formatter.RedundantImportFormatter;
 import dev.limburg.checkstyle.formatter.TabCharacterFormatter;
 import dev.limburg.checkstyle.formatter.TrailingSpacesFormatter;
 import dev.limburg.checkstyle.formatter.UnusedImportFormatter;
@@ -72,6 +73,8 @@ public class FileFormatter {
     private static final String WHITESPACE_FOLLOWED_KEY = "ws.followed";
     private static final String CONTAINS_TAB_KEY = "containsTab";
     private static final String FILE_CONTAINS_TAB_KEY = "file.containsTab";
+    private static final String REDUNDANT_IMPORT_KEY = "import.duplicate";
+    private static final String REDUNDANT_LANG_KEY = "import.lang";
     private static final Map<String, LineFormatter> FORMATTERS = new HashMap<>();
 
     static {
@@ -91,6 +94,8 @@ public class FileFormatter {
         FORMATTERS.put(WHITESPACE_FOLLOWED_KEY, new WhitespaceFormatter());
         FORMATTERS.put(CONTAINS_TAB_KEY, new TabCharacterFormatter());
         FORMATTERS.put(FILE_CONTAINS_TAB_KEY, new TabCharacterFormatter());
+        FORMATTERS.put(REDUNDANT_IMPORT_KEY, new RedundantImportFormatter());
+        FORMATTERS.put(REDUNDANT_LANG_KEY, new RedundantImportFormatter());
     }
 
     private FileChangedListener fileChangedListener;
