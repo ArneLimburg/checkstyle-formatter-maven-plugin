@@ -175,8 +175,7 @@
       <property name="format" value="^[a-z]+([A-Z][a-z]+)*$"/>
     </module>
     <module name="ParameterNumber" />
-    <module name="ParenPad"/>    
-  
+    <module name="ParenPad"/>
     <module name="RedundantImport"/>
     <module name="RedundantModifier"/>
     <module name="RightCurly" />    

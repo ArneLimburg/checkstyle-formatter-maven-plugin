@@ -71,5 +71,11 @@ public class CheckstyleFormatterMojoTest {
         rule.whenExecuteFormatting();
         rule.thenResultIsSameAs("src/it/java/tab-character-result");
     }
-}
 
+    @Test
+    public void redundantImport() throws Exception {
+        rule.given("src/it/java/redundant_import");
+        rule.whenExecuteFormatting();
+        rule.thenResultIsSameAs("src/it/java/redundant_import-result");
+    }
+}
